@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Documentos PDF</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <div class="contenedor">
+        <header>
+            <h1>Gestor de Archivos PDF</h1>
+            <p>Sube y organiza tus documentos de manera segura.</p>
+        </header>
+
+        <main class="contenido-principal">
+            <!-- Sección del Formulario -->
+            <section class="tarjeta-formulario">
+                <h2>Subir un archivo</h2>
+                <form action="subir.php" method="POST" enctype="multipart/form-data">
+                    <div class="grupo-input">
+                        <label for="archivo" class="boton-archivo">
+                            <span>Seleccionar archivo PDF</span>
+                            <input type="file" id="archivo" name="archivo" accept=".pdf" required>
+                        </label>
+                        <div id="nombre-archivo-seleccionado" class="nombre-archivo">Ningún archivo seleccionado</div>
+                    </div>
+                    <button type="submit" class="boton-enviar">Guardar archivo</button>
+                </form>
+            </section>
+
+            <!-- Sección de la Lista de Archivos (Se llena con JS) -->
+            <section class="tarjeta-lista">
+                <h2>Archivos Guardados</h2>
+                <ul id="lista-archivos-container" class="lista-archivos">
+                    <!-- JavaScript insertará los archivos aquí -->
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Mostrar el nombre del archivo seleccionado en el botón
+        document.getElementById('archivo').addEventListener('change', function(e) {
+            var nombre = e.target.files[0] ? e.target.files[0].name : 'Ningún archivo seleccionado';
+            document.getElementById('nombre-archivo-seleccionado').textContent = nombre;
+        });
+
+        // Cargar la lista de archivos mediante una petición en segundo plano
+        function cargarArchivos() {
+            fetch('listar.php')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('lista-archivos-container').innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById('lista-archivos-container').innerHTML = '<li class="lista-error">Error al cargar la lista.</li>';
+                });
+        }
+
+        // Ejecutar la carga apenas se abre la página
+        window.addEventListener('DOMContentLoaded', cargarArchivos);
+    </script>
+</body>
+</html>
